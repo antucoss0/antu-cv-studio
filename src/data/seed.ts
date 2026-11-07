@@ -1,13 +1,13 @@
 import type { Profile } from '../types'
 
-export const SEED_VERSION = 1
+export const SEED_VERSION = 2
 
 export const seedProfile: Profile = {
   name: 'Antu Coss',
   fullName: 'Antu Santiago Coss',
   email: 'antucoss2@gmail.com',
   phone: '322 236 5291',
-  location: 'Guadalajara, México',
+  location: 'Ciudad de México (CDMX), México',
   links: [
     { label: 'Portafolio', url: 'https://antucoss.xyz/' },
     { label: 'Ethercoded', url: 'https://ethercoded.com/' },

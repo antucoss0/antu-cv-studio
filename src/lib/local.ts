@@ -7,7 +7,7 @@ export function norm(s: string) {
     .replace(/[\u0300-\u036f]/g, '')
 }
 
-function hasTerm(haystack: string, term: string) {
+export function hasTerm(haystack: string, term: string) {
   const t = norm(term).trim()
   if (!t) return false
   if (t.length <= 3) {
@@ -62,11 +62,14 @@ export function matchedKeywords(profile: Profile, jobText: string) {
   const vocab = new Map<string, string>()
   const add = (v: string) => {
     const base = v.split(/[(/]/)[0].trim()
-    if (base.length > 1 && !vocab.has(norm(base))) vocab.set(norm(base), base)
+    const pretty = base.charAt(0).toUpperCase() + base.slice(1)
+    for (const k of [base, base.replace(/\s+v?\d+(\.\d+)?$/i, '')])
+      if (k.length > 1 && !vocab.has(norm(k))) vocab.set(norm(k), k === base ? pretty : k)
   }
   profile.skills.forEach((g) => g.items.forEach(add))
   profile.entries.forEach((e) => e.keywords?.forEach(add))
-  return Array.from(vocab.values()).filter((v) => hasTerm(h, v))
+  const hits = Array.from(vocab.values()).filter((v) => hasTerm(h, v))
+  return hits.filter((v) => !hits.some((o) => o !== v && norm(o).startsWith(`${norm(v)} `)))
 }
 
 export interface LocalInput {
@@ -114,26 +117,27 @@ export function generateLocal(profile: Profile, input: LocalInput): Omit<Applica
     }))
     .filter((x) => x.s > 0)
     .sort((a, b) => b.s - a.s)
-    .slice(0, 6)
+    .slice(0, 5)
     .map(({ g }) => ({
       group: g.name,
       items: [...g.items].sort((a, b) => Number(hasTerm(h, b.split(/[(/]/)[0])) - Number(hasTerm(h, a.split(/[(/]/)[0]))),
     }))
 
+  const matched = matchedKeywords(profile, `${input.title}\n${input.jobText}`)
   const cv: GeneratedCv = {
-    title: input.title ? `${primary.title}` : primary.title,
+    title: primary.title,
     summary: primary.summary,
+    keywords: matched.slice(0, 16),
     skills,
     experience: experience
       .sort((a, b) => (b.start ?? '').localeCompare(a.start ?? ''))
-      .map(toCvItem),
-    projects: projects.map(toCvItem),
+      .map((e) => ({ ...toCvItem(e), bullets: e.bullets.slice(0, isHosp ? 4 : 3) })),
+    projects: projects.map((e) => ({ ...toCvItem(e), bullets: e.bullets.slice(0, 2) })),
     education: education.map(toCvItem),
     certifications: certs.map((c) => [c.title, c.org, c.start].filter(Boolean).join(' — ')),
     languages: profile.languages,
   }
 
-  const matched = matchedKeywords(profile, input.jobText)
   const letter = localLetter(profile, primary, input, experience, projects, matched)
   const notes = [
     `Perfil detectado: ${primary.label}${secondary ? ` (+ ${secondary.label})` : ''}.`,

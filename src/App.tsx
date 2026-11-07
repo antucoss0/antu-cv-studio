@@ -5,11 +5,12 @@ import { downscaleImage, fetchJobFromUrl, fileToDataUrl, ocrImage } from './lib/
 import { generateLocal, guessTitleCompany } from './lib/local'
 import { generateWithAI } from './lib/ai'
 import { CvDoc, LetterDoc } from './components/Docs'
+import { atsCheck, cvToText, downloadDocx, downloadText } from './lib/ats'
 import { DbPanel, EntryEditor, SettingsModal } from './components/Modals'
 import { Mascot } from './components/Mascot'
 
 type Source = 'link' | 'image' | 'text'
-type View = 'cv' | 'letter' | 'notes'
+type View = 'cv' | 'letter' | 'ats' | 'notes'
 
 export default function App() {
   const [profile, setProfile] = useProfile()
@@ -31,6 +32,7 @@ export default function App() {
   const [app, setApp] = useState<Application | null>(history[0] ?? null)
   const [view, setView] = useState<View>('cv')
   const [docKey, setDocKey] = useState(0)
+  const [live, setLive] = useState<{ key: string; text: string } | null>(null)
 
   const [modal, setModal] = useState<'add' | 'db' | 'settings' | null>(null)
   const [editing, setEditing] = useState<Entry | undefined>()
@@ -133,10 +135,20 @@ export default function App() {
   function printDoc(which: 'cv' | 'letter') {
     const prev = document.title
     document.title = fileBase(which === 'cv' ? 'CV' : 'Carta')
-    document.body.dataset.print = which
+    const el = which === 'cv' ? cvRef.current : letterRef.current
+    if (!el) return
+    const root = document.createElement('div')
+    root.id = 'print-root'
+    const copy = el.cloneNode(true) as HTMLElement
+    copy.removeAttribute('contenteditable')
+    copy.classList.remove('hidden')
+    root.appendChild(copy)
+    document.body.appendChild(root)
+    document.body.classList.add('printing')
     const done = () => {
       document.title = prev
-      delete document.body.dataset.print
+      document.body.classList.remove('printing')
+      root.remove()
       window.removeEventListener('afterprint', done)
     }
     window.addEventListener('afterprint', done)
@@ -150,18 +162,18 @@ export default function App() {
     setToast('Copiado al portapapeles ♡')
   }
 
-  function downloadDoc(which: 'cv' | 'letter') {
+  async function downloadDoc(which: 'cv' | 'letter', format: 'docx' | 'txt') {
     const el = which === 'cv' ? cvRef.current : letterRef.current
     if (!el) return
-    const css = Array.from(document.querySelectorAll('style'))
-      .map((s) => s.textContent)
-      .join('\n')
-    const html = `<!doctype html><html><head><meta charset="utf-8"><title>${fileBase(which === 'cv' ? 'CV' : 'Carta')}</title><style>${css}</style></head><body class="standalone">${el.outerHTML.replace(/contenteditable="true"/g, '')}</body></html>`
-    const a = document.createElement('a')
-    a.href = URL.createObjectURL(new Blob([html], { type: 'application/msword' }))
-    a.download = `${fileBase(which === 'cv' ? 'CV' : 'Carta')}.doc`
-    a.click()
+    const name = fileBase(which === 'cv' ? 'CV' : 'Carta')
+    if (format === 'txt') downloadText(el.innerText, name)
+    else await downloadDocx(el, name)
   }
+
+  const liveKey = app ? `${app.id}-${docKey}` : ''
+  const ats = app
+    ? atsCheck(profile, live?.key === liveKey ? live.text : cvToText(profile, app.cv, app.lang), app.job.text || (app.cv.keywords ?? []).join(', '), app.lang)
+    : null
 
   function saveEntry(e: Entry) {
     const exists = profile.entries.some((x) => x.id === e.id)
@@ -360,19 +372,25 @@ export default function App() {
               <button className={view === 'letter' ? 'on' : ''} onClick={() => setView('letter')}>
                 Carta de presentación
               </button>
+              <button className={view === 'ats' ? 'on' : ''} onClick={() => setView('ats')}>
+                Lectura ATS / IA ({ats?.score ?? 0}%)
+              </button>
               <button className={view === 'notes' ? 'on' : ''} onClick={() => setView('notes')}>
                 Tips ({app.notes.length})
               </button>
             </div>
-            {view !== 'notes' && (
+            {(view === 'cv' || view === 'letter') && (
               <div className="doc-toolbar">
                 <span className="hint">Haz clic sobre el documento para editarlo antes de descargar ✎</span>
                 <div>
                   <button className="btn small" onClick={() => printDoc(view)}>
                     ⬇ PDF
                   </button>
-                  <button className="btn small ghost" onClick={() => downloadDoc(view)}>
-                    ⬇ Word
+                  <button className="btn small ghost" onClick={() => downloadDoc(view, 'docx')}>
+                    ⬇ Word (.docx)
+                  </button>
+                  <button className="btn small ghost" onClick={() => downloadDoc(view, 'txt')}>
+                    ⬇ Texto
                   </button>
                   <button className="btn small ghost" onClick={() => copyDoc(view)}>
                     ⧉ Copiar
@@ -381,8 +399,51 @@ export default function App() {
               </div>
             )}
             <div className="paper-wrap" key={docKey}>
-              <CvDoc ref={cvRef} profile={profile} cv={app.cv} lang={app.lang} className={`print-cv ${view === 'cv' ? '' : 'hidden'}`} />
-              <LetterDoc ref={letterRef} profile={profile} letter={app.letter} title={app.cv.title} lang={app.lang} className={`print-letter ${view === 'letter' ? '' : 'hidden'}`} />
+              <CvDoc ref={cvRef} profile={profile} cv={app.cv} lang={app.lang} onInput={(t) => setLive({ key: liveKey, text: t })} className={`print-cv ${view === 'cv' ? '' : 'hidden'}`} />
+              <LetterDoc ref={letterRef} profile={profile} letter={app.letter} title={app.cv.title} lang={app.lang} date={app.createdAt} className={`print-letter ${view === 'letter' ? '' : 'hidden'}`} />
+              {view === 'ats' && ats && (
+                <div className="ats">
+                  <div className="ats-score" style={{ ['--p' as string]: ats.score }}>
+                    <b>{ats.score}%</b>
+                    <span>compatibilidad ATS / IA</span>
+                  </div>
+                  <ul className="ats-checks">
+                    {ats.checks.map((c, i) => (
+                      <li key={i} className={c.ok ? 'ok' : 'bad'}>
+                        {c.ok ? '✓' : '!'} {c.label}
+                      </li>
+                    ))}
+                  </ul>
+                  {ats.matched.length > 0 && (
+                    <div>
+                      <h4>Palabras clave de la vacante que ya están en tu CV</h4>
+                      <div className="chips">
+                        {ats.matched.map((k) => (
+                          <span key={k} className="chip on">
+                            {k}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {ats.missing.length > 0 && (
+                    <div>
+                      <h4>Las tienes en tu base pero faltan en este CV — agrégalas editando el documento</h4>
+                      <div className="chips">
+                        {ats.missing.map((k) => (
+                          <span key={k} className="chip miss">
+                            {k}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  <p className="hint">
+                    El PDF se genera con texto seleccionable en una sola columna, con encabezados estándar y sin tablas ni imágenes, para que los sistemas ATS (Workday, Greenhouse, Lever, OCC, Computrabajo…) y los filtros de IA lo
+                    lean bien. Para portales que piden archivo, sube el PDF o el .docx; para formularios, copia el texto.
+                  </p>
+                </div>
+              )}
               {view === 'notes' && (
                 <ul className="notes">
                   {app.notes.map((n, i) => (

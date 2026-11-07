@@ -65,6 +65,7 @@ export interface CvItem {
 export interface GeneratedCv {
   title: string
   summary: string
+  keywords?: string[]
   skills: { group: string; items: string[] }[]
   experience: CvItem[]
   projects: CvItem[]

@@ -83,7 +83,13 @@ export interface AiResult {
 const RULES = `Reglas estrictas:
 - Usa SOLO hechos presentes en la base de datos de Antu. Puedes reformular, resumir, reordenar y priorizar, pero NUNCA inventes empleos, fechas, empresas, métricas, títulos ni certificaciones.
 - "Ethercoded" (https://ethercoded.com) es el nombre actual del estudio de ingeniería de experiencias inmersivas de Antu (antes se llamaba Vibecoded / vibecoded.lat). Nunca escribas "Vibecoded" ni "vibecoded.lat".
-- Optimiza para ATS: incorpora palabras clave literales de la vacante SOLO cuando sean verdaderas según la base de datos.
+- El CV debe pasar sistemas ATS y lectores/filtros de IA de reclutamiento:
+  · Usa las palabras clave EXACTAS de la vacante (mismo término y grafía, p. ej. "Unreal Engine 5", "Realidad Aumentada (AR)") SOLO cuando sean verdaderas según la base de datos; incluye sigla y nombre completo la primera vez.
+  · "keywords": 10–16 competencias clave literales de la vacante que Antu sí tiene, en orden de importancia para el puesto.
+  · El titular ("title") debe reflejar el nombre del puesto de la vacante cuando sea veraz.
+  · Cada puesto con título, empresa y periodo (años); bullets que empiecen con verbo de acción, con tecnología y resultado.
+  · Texto plano: sin emojis, símbolos decorativos, tablas ni columnas.
+  · Ubicación actual de Antu: {{LOCATION}}.
 - Prioriza la experiencia y proyectos más relevantes para la vacante; omite lo irrelevante (p. ej. hospitalidad para un puesto de IA, o IA para un puesto de recepción, salvo que aporte).
 - El CV debe caber en 1–2 páginas: 4–7 experiencias, 2–5 proyectos, bullets concisos orientados a logros (verbo en pasado/presente).
 - La carta: 250–380 palabras, cálida, segura y específica a la empresa/puesto; menciona por qué Antu encaja y 2–3 evidencias concretas de la base de datos. Sin clichés vacíos.`
@@ -96,7 +102,8 @@ const SCHEMA = `Devuelve SOLO un objeto JSON con esta forma exacta:
   "track": one of ["ia","ia-art","gamedev","xr","3d","multimedia","frontend","design","hospitality"],
   "cv": {
     "title": string,             // titular profesional adaptado a la vacante
-    "summary": string,           // perfil profesional 3–5 frases
+    "summary": string,           // resumen profesional 3–5 frases con las palabras clave principales
+    "keywords": string[],        // 10–16 competencias clave literales de la vacante (veraces)
     "skills": [{"group": string, "items": string[]}],
     "experience": [{"title": string, "org": string, "period": string, "location": string, "url": string, "bullets": string[]}],
     "projects": [{"title": string, "org": string, "period": string, "url": string, "bullets": string[]}],
@@ -112,7 +119,7 @@ export async function generateWithAI(settings: Settings, profile: Profile, input
   const langName = input.lang === 'en' ? 'inglés (English)' : 'español'
   const system = `Eres un reclutador senior y redactor experto de CVs y cartas de presentación para perfiles creativos y tecnológicos. Trabajas exclusivamente para Antu Coss, un perfil multidisciplinario (IA, game dev, XR, 3D, multimedia, frontend, diseño, hospitalidad).
 
-${RULES}
+${RULES.replace('{{LOCATION}}', profile.location)}
 - Escribe TODO el contenido del CV y la carta en ${langName}.
 
 BASE DE DATOS DE ANTU (JSON):

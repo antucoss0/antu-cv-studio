@@ -23,6 +23,10 @@ function usePersisted<T>(key: string, init: () => T) {
   return [value, setValue] as const
 }
 
+const MIGRATIONS: Record<number, (p: Profile) => Profile> = {
+  2: (p) => ({ ...p, location: /guadalajara/i.test(p.location) ? seedProfile.location : p.location }),
+}
+
 export function cloneSeed(): Profile {
   return structuredClone(seedProfile)
 }
@@ -30,8 +34,10 @@ export function cloneSeed(): Profile {
 export function useProfile() {
   const [profile, setProfile] = useState<Profile>(() => {
     const stored = load<{ v: number; profile: Profile } | null>(DB_KEY, null)
-    if (stored && stored.v === SEED_VERSION && stored.profile) return stored.profile
-    return cloneSeed()
+    if (!stored?.profile) return cloneSeed()
+    let p = stored.profile
+    for (let v = (stored.v ?? 1) + 1; v <= SEED_VERSION; v++) p = MIGRATIONS[v]?.(p) ?? p
+    return p
   })
   useEffect(() => {
     localStorage.setItem(DB_KEY, JSON.stringify({ v: SEED_VERSION, profile }))
