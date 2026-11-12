@@ -282,6 +282,18 @@ export function DbPanel({
                 />
               </label>
               <label>
+                Titulares alternativos (uno por línea — se rotan en cada CV)
+                <textarea
+                  rows={3}
+                  value={(t.titles ?? []).join('\n')}
+                  onChange={(ev) => {
+                    const tracks = [...profile.tracks]
+                    tracks[i] = { ...t, titles: ev.target.value.split('\n') }
+                    setProfile({ ...profile, tracks })
+                  }}
+                />
+              </label>
+              <label>
                 Resumen
                 <textarea
                   rows={3}

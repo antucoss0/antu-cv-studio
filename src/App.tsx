@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { Application, Entry, TrackId } from './types'
 import { useHistory, useProfile, useSettings, uid } from './lib/store'
 import { downscaleImage, fetchJobFromUrl, fileToDataUrl, ocrImage } from './lib/extract'
-import { generateLocal, guessTitleCompany } from './lib/local'
+import { generateLocal, guessTitleCompany, pickHeadline } from './lib/local'
 import { generateWithAI } from './lib/ai'
 import { CvDoc, LetterDoc } from './components/Docs'
 import { atsCheck, cvToText, downloadDocx, downloadText } from './lib/ats'
@@ -107,11 +107,12 @@ export default function App() {
           lang,
           forcedTrack: track || undefined,
           extra,
+          avoidTitles: recentTitles(),
         })
         result = { ...base, mode: 'ai', track: r.track, job: { ...base.job, title: r.jobTitle || base.job.title, company: r.company || base.job.company }, cv: r.cv, letter: r.letter, notes: [r.jobSummary, ...r.notes].filter(Boolean) }
       } else {
         setBusy('Armando tu CV y carta…')
-        const r = generateLocal(profile, { jobText, title: base.job.title, company: base.job.company, forcedTrack: track || undefined })
+        const r = generateLocal(profile, { jobText, title: base.job.title, company: base.job.company, forcedTrack: track || undefined, avoidTitles: recentTitles() })
         result = { ...base, mode: 'local', track: r.track, cv: r.cv, letter: r.letter, notes: lang === 'en' ? [...r.notes, 'El modo local solo redacta en español; activa IA para inglés.'] : r.notes }
         result.lang = 'es'
       }
@@ -125,6 +126,23 @@ export default function App() {
     } finally {
       setBusy('')
     }
+  }
+
+  function recentTitles(extra: string[] = []) {
+    return Array.from(new Set([...extra, ...history.slice(0, 8).map((h) => h.cv.title)]))
+  }
+
+  function newHeadline() {
+    if (!app) return
+    const primary = profile.tracks.find((t) => t.id === app.track) ?? profile.tracks[0]
+    const used = (app.usedTitles ?? []).concat(app.cv.title)
+    let t = pickHeadline(profile, primary, undefined, app.job.title, app.job.text, recentTitles(used))
+    if (used.includes(t)) t = pickHeadline(profile, primary, undefined, app.job.title, app.job.text, [])
+    const updated: Application = { ...app, cv: { ...app.cv, title: t }, usedTitles: used.slice(-12) }
+    setApp(updated)
+    setHistory(history.map((h) => (h.id === app.id ? updated : h)))
+    setDocKey((k) => k + 1)
+    setToast('Nuevo titular ✦')
   }
 
   function fileBase(kind: string) {
@@ -381,7 +399,12 @@ export default function App() {
             </div>
             {(view === 'cv' || view === 'letter') && (
               <div className="doc-toolbar">
-                <span className="hint">Haz clic sobre el documento para editarlo antes de descargar ✎</span>
+                <span className="hint">
+                  Haz clic sobre el documento para editarlo antes de descargar ✎{' '}
+                  <button className="btn small ghost" onClick={newHeadline}>
+                    ↻ Otro titular
+                  </button>
+                </span>
                 <div>
                   <button className="btn small" onClick={() => printDoc(view)}>
                     ⬇ PDF

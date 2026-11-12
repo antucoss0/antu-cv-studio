@@ -68,6 +68,7 @@ export interface AiJobInput {
   lang: 'es' | 'en'
   forcedTrack?: TrackId
   extra: string
+  avoidTitles?: string[]
 }
 
 export interface AiResult {
@@ -86,7 +87,7 @@ const RULES = `Reglas estrictas:
 - El CV debe pasar sistemas ATS y lectores/filtros de IA de reclutamiento:
   · Usa las palabras clave EXACTAS de la vacante (mismo término y grafía, p. ej. "Unreal Engine 5", "Realidad Aumentada (AR)") SOLO cuando sean verdaderas según la base de datos; incluye sigla y nombre completo la primera vez.
   · "keywords": 10–16 competencias clave literales de la vacante que Antu sí tiene, en orden de importancia para el puesto.
-  · El titular ("title") debe reflejar el nombre del puesto de la vacante cuando sea veraz.
+  · El titular ("title") es NUEVO en cada generación y se adapta a la vacante: combina el rol real de Antu más afín (ver "titles" de cada perfil y los títulos de sus experiencias) con 1–2 especialidades clave de la vacante. Antu NO siempre es "Desarrollador": puede ser artista, VJ, diseñador, arquitecto de IA, game designer, artista 3D, recepcionista, etc. Usa "Desarrollador" solo si la vacante es de desarrollo.
   · Cada puesto con título, empresa y periodo (años); bullets que empiecen con verbo de acción, con tecnología y resultado.
   · Texto plano: sin emojis, símbolos decorativos, tablas ni columnas.
   · Ubicación actual de Antu: {{LOCATION}}.
@@ -131,7 +132,7 @@ ${SCHEMA}`
   parts.push({
     type: 'text',
     text: `OPORTUNIDAD${input.imageDataUrl ? ' (también en el flyer/imagen adjunta — léelo con atención)' : ''}:
-Puesto indicado: ${input.title || '(detectar)'}
+${input.avoidTitles?.length ? `Titulares ya usados (NO los repitas): ${input.avoidTitles.join(' / ')}\n` : ''}Puesto indicado: ${input.title || '(detectar)'}
 Empresa indicada: ${input.company || '(detectar)'}
 ${input.forcedTrack ? `Perfil a enfatizar: ${input.forcedTrack}\n` : ''}${input.extra ? `Instrucciones extra de Antu: ${input.extra}\n` : ''}
 Texto de la vacante:

@@ -77,6 +77,41 @@ export interface LocalInput {
   title: string
   company: string
   forcedTrack?: TrackId
+  avoidTitles?: string[]
+}
+
+export function headlineCandidates(profile: Profile, primary: Track, secondary?: Track) {
+  const own = (t?: Track) => (t ? [t.title, ...(t.titles ?? [])] : [])
+  const roles = profile.entries
+    .filter((e) => e.kind === 'experience' && e.tags[0] === primary.id && !/co-?founder|cto|ceo/i.test(e.title))
+    .map((e) => e.title)
+  return Array.from(new Set([...own(primary), ...roles, ...own(secondary)].map((t) => t.trim()).filter(Boolean)))
+}
+
+export function pickHeadline(profile: Profile, primary: Track, secondary: Track | undefined, jobTitle: string, jobText: string, avoid: string[] = []) {
+  const titleToks = jobTokens(jobTitle)
+  const textToks = jobTokens(jobText)
+  const avoidN = new Set(avoid.map((a) => norm(a.split(' | ')[0])))
+  const own = new Set(headlineCandidates(profile, primary).map(norm))
+  const scored = headlineCandidates(profile, primary, secondary).map((c) => {
+    const n = norm(c)
+    const s =
+      titleToks.filter((t) => n.includes(t)).length * 3 +
+      textToks.filter((t) => n.includes(t)).length * 0.5 +
+      (own.has(n) ? 1 : 0) -
+      (avoidN.has(n) ? 100 : 0) +
+      Math.random() * 1.2
+    return { c, s }
+  })
+  scored.sort((a, b) => b.s - a.s)
+  const base = scored[0]?.c ?? primary.title
+  const h = norm(`${jobTitle}\n${jobText}`)
+  const extras = Array.from(new Set(profile.skills.flatMap((g) => g.items.map((v) => v.split(/[(/]/)[0].trim()))))
+    .filter((k) => k.length > 2 && hasTerm(h, k) && !norm(base).includes(norm(k)))
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 2)
+  const full = extras.length === 2 ? `${base} | ${extras.join(' · ')}` : base
+  return full.length <= 95 ? full : base
 }
 
 export function generateLocal(profile: Profile, input: LocalInput): Omit<Application, 'id' | 'createdAt' | 'job' | 'lang'> & {
@@ -125,7 +160,7 @@ export function generateLocal(profile: Profile, input: LocalInput): Omit<Applica
 
   const matched = matchedKeywords(profile, `${input.title}\n${input.jobText}`)
   const cv: GeneratedCv = {
-    title: primary.title,
+    title: pickHeadline(profile, primary, secondary, input.title, input.jobText, input.avoidTitles),
     summary: primary.summary,
     keywords: matched.slice(0, 16),
     skills,
@@ -138,7 +173,7 @@ export function generateLocal(profile: Profile, input: LocalInput): Omit<Applica
     languages: profile.languages,
   }
 
-  const letter = localLetter(profile, primary, input, experience, projects, matched)
+  const letter = localLetter(profile, { ...primary, title: cv.title.split(' | ')[0] }, input, experience, projects, matched)
   const notes = [
     `Perfil detectado: ${primary.label}${secondary ? ` (+ ${secondary.label})` : ''}.`,
     matched.length

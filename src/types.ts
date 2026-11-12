@@ -36,6 +36,7 @@ export interface Track {
   id: TrackId
   label: string
   title: string
+  titles?: string[]
   summary: string
   keywords: string[]
 }
@@ -99,6 +100,7 @@ export interface Application {
   cv: GeneratedCv
   letter: GeneratedLetter
   notes: string[]
+  usedTitles?: string[]
 }
 
 export type Provider = 'anthropic' | 'openai' | 'none'

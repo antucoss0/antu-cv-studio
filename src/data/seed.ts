@@ -1,6 +1,6 @@
 import type { Profile } from '../types'
 
-export const SEED_VERSION = 2
+export const SEED_VERSION = 3
 
 export const seedProfile: Profile = {
   name: 'Antu Coss',
@@ -20,6 +20,7 @@ export const seedProfile: Profile = {
       id: 'ia',
       label: 'IA Architect',
       title: 'AI Solutions Architect & Creative Technologist',
+      titles: ['AI Solutions Architect & Creative Technologist', 'IA Architect & Creative Technologist', 'Arquitecto de Sistemas de IA & Ingeniero Full Stack', 'Lead AI Engineer & Automation Specialist', 'AI Engineer — Agentes, RAG & Automatización'],
       summary:
         'Arquitecto de sistemas de inteligencia artificial e ingeniero fullstack. Diseño e implemento infraestructuras escalables que integran modelos de IA, arquitecturas multi-agente, sistemas RAG, automatizaciones complejas y productos SaaS. Mi diferenciación: vengo de la experimentación artística, entiendo qué problemas creativos y humanos vale la pena resolver y los traduzco en sistemas técnicos robustos. Experiencia orquestando flujos end-to-end con LLMs, fine-tuning de modelos y gestión concurrente de proyectos tecnológicos complejos.',
       keywords: ['ia', 'ai', 'inteligencia artificial', 'artificial intelligence', 'llm', 'rag', 'machine learning', 'ml', 'agente', 'agent', 'agents', 'langchain', 'llamaindex', 'openai', 'anthropic', 'claude', 'gpt', 'python', 'backend', 'fullstack', 'full stack', 'saas', 'automatización', 'automation', 'embeddings', 'vector', 'fine-tuning', 'mlops', 'data', 'api', 'apis', 'fastapi', 'node', 'arquitecto', 'architect', 'engineer', 'ingeniero', 'nlp', 'genai', 'generative'],
@@ -28,6 +29,7 @@ export const seedProfile: Profile = {
       id: 'ia-art',
       label: 'IA Artist',
       title: 'IA Artist & Creative Technologist',
+      titles: ['IA Artist & Creative Technologist', 'Artista Digital & IA Generativa', 'Artista de Nuevos Medios & IA Generativa', 'Artista Multimedia & Creative Technologist'],
       summary:
         'Artista e investigador creativo especializado en sistemas generativos e inteligencia artificial. Desde 2023 desarrollo una práctica continua que explora los límites entre lo humano y lo sintético a través de imagen, video, música, 3D interactivo y entornos inmersivos. Trabajo la IA no como mera herramienta sino como co-autora y medio expresivo, cruzando arte, tecnología y narrativa para construir nuevos lenguajes, identidades y realidades digitales.',
       keywords: ['arte', 'art', 'artista', 'artist', 'residencia', 'residency', 'convocatoria', 'open call', 'beca', 'grant', 'festival', 'exposición', 'exhibition', 'museo', 'museum', 'galería', 'gallery', 'net art', 'generativo', 'generative', 'midjourney', 'stable diffusion', 'comfyui', 'runway', 'curaduría', 'obra', 'instalación', 'installation', 'performance', 'new media', 'nuevos medios', 'cultura'],
@@ -36,6 +38,7 @@ export const seedProfile: Profile = {
       id: 'gamedev',
       label: 'Game Dev',
       title: 'Game Developer & Interactive Systems Designer',
+      titles: ['Game Developer & Interactive Systems Designer', 'Diseñador de Videojuegos & Desarrollador Unreal Engine', 'Game Designer & Narrative Developer', 'Desarrollador de Videojuegos & Experiencias Interactivas'],
       summary:
         'Desarrollador de videojuegos con formación en Multimedia, Arte Digital e IA. Combino programación (C++, C#, Python, Blueprints), diseño de sistemas interactivos e inteligencia artificial para crear experiencias que cruzan mecánicas jugables con narrativa inmersiva y entornos 3D generativos. Background único: lógica técnica + dirección artística + arquitectura de sistemas complejos.',
       keywords: ['game', 'games', 'videojuego', 'videojuegos', 'gameplay', 'unreal', 'unity', 'godot', 'blueprints', 'c++', 'c#', 'level design', 'diseño de niveles', 'npc', 'gamedev', 'game designer', 'mecánicas', 'mechanics', 'roblox', 'indie', 'estudio de juegos', 'studio'],
@@ -44,6 +47,7 @@ export const seedProfile: Profile = {
       id: 'xr',
       label: 'AR / VR',
       title: 'Desarrollador AR/VR & Ingeniero de Experiencias Inmersivas',
+      titles: ['Desarrollador AR/VR & Diseñador de Videojuegos', 'Ingeniero de Experiencias Inmersivas (AR/VR/XR)', 'XR Developer & Creative Technologist', 'Creador de Filtros AR & Experiencias Inmersivas'],
       summary:
         'Desarrollador e ingeniero inmersivo especializado en Realidad Aumentada (AR), Realidad Virtual (VR) y diseño de experiencias interactivas. Experiencia en la concepción, programación y optimización de experiencias complejas con Unity, Unreal Engine y WebXR, integrando computación espacial, narrativa no lineal y desarrollo técnico multimotor (C#, C++, Blueprints) para proyectos comerciales, educativos y artísticos.',
       keywords: ['ar', 'vr', 'xr', 'realidad aumentada', 'augmented reality', 'realidad virtual', 'virtual reality', 'mixed reality', 'webxr', 'spatial', 'espacial', 'filtros', 'filters', 'effect house', 'spark ar', 'snap', 'lens studio', 'zapworks', 'quest', 'vision pro', 'inmersivo', 'immersive', '360', 'metaverso', 'metaverse', 'face tracking'],
@@ -52,6 +56,7 @@ export const seedProfile: Profile = {
       id: '3d',
       label: '3D Artist',
       title: 'Artista 3D & Especialista en Captura de Realidad',
+      titles: ['Artista 3D & Especialista en Captura de Realidad', '3D Generalist & Real-Time Artist', 'Artista 3D — Fotogrametría & Gaussian Splatting', 'Environment & Asset Artist 3D'],
       summary:
         'Artista 3D y especialista en captura de realidad enfocado en el desarrollo y optimización de assets de alta fidelidad para entornos inmersivos y motores en tiempo real. Experiencia combinada en el pipeline 3D tradicional (modelado, retopología, rigging, animación y texturizado) e integración de tecnologías de escaneo tridimensional avanzado como Gaussian Splatting y fotogrametría.',
       keywords: ['3d', 'modelado', 'modeling', 'modeller', 'blender', 'maya', 'zbrush', 'substance', 'texturizado', 'texturing', 'rigging', 'animación', 'animation', 'render', 'lookdev', 'fotogrametría', 'photogrammetry', 'gaussian', 'splatting', 'escaneo', 'scan', 'assets', 'metahuman', 'cgi', 'vfx', 'personajes', 'character', 'environment artist', 'motion'],
@@ -60,6 +65,7 @@ export const seedProfile: Profile = {
       id: 'multimedia',
       label: 'Multimedia / A/V',
       title: 'Desarrollador Multimedia & Creative Technologist',
+      titles: ['Creative Technologist & Artista Audiovisual', 'VJ & Artista Audiovisual en Vivo', 'Diseñador de Experiencias Inmersivas & Video Mapping', 'Artista Multimedia & Creative Technologist', 'Desarrollador Multimedia & Creative Technologist'],
       summary:
         'Desarrollador multimedia especializado en diseño y desarrollo de experiencias interactivas que integran arte, tecnología y narrativa. Experiencia técnica en desarrollo XR, motores de videojuegos, sistemas audiovisuales en tiempo real, video mapping y entornos inmersivos. Capacidad demostrada para combinar pensamiento creativo con arquitectura técnica rigurosa en la construcción de soluciones digitales y nuevos lenguajes de interacción.',
       keywords: ['multimedia', 'audiovisual', 'a/v', 'vj', 'video mapping', 'mapping', 'touchdesigner', 'resolume', 'tiempo real', 'real-time', 'realtime', 'live', 'evento', 'eventos', 'events', 'instalación', 'interactivo', 'interactive', 'creative technologist', 'tecnólogo creativo', 'arduino', 'sensores', 'producción', 'show', 'música', 'music', 'museografía', 'experiencia'],
@@ -68,6 +74,7 @@ export const seedProfile: Profile = {
       id: 'frontend',
       label: 'Web Frontend',
       title: 'Especialista Web Frontend & Creative Technologist',
+      titles: ['Especialista Web Frontend & Creative Technologist', 'Creative Developer (Three.js / WebGL)', 'Estratega Digital & Experiencias Web Premium', 'Desarrollador Web 3D & Interfaces Inmersivas'],
       summary:
         'Especialista frontend y estratega digital enfocado en experiencias web premium. Transformo marcas en entornos interactivos mediante IA generativa, 3D avanzado (Three.js / WebGL) y web inmersiva, combinando estética minimalista con funcionalidad técnica robusta. Experiencia en arquitecturas digitales escalables para sectores inmobiliario, hotelero, salud y tecnología.',
       keywords: ['frontend', 'front-end', 'front end', 'react', 'next.js', 'nextjs', 'javascript', 'typescript', 'three.js', 'threejs', 'webgl', 'html', 'css', 'tailwind', 'web', 'sitio', 'website', 'landing', 'ui', 'ux', 'seo', 'performance', 'wordpress', 'shopify', 'vercel', 'desarrollador web', 'web developer'],
@@ -76,6 +83,7 @@ export const seedProfile: Profile = {
       id: 'design',
       label: 'Diseño Visual',
       title: 'Creative Visual Designer & Technologist',
+      titles: ['Creative Visual Designer & Technologist', 'Diseñador Visual & Dirección de Arte', 'Diseñador Multimedia & Contenido Digital', 'Diseñador Gráfico & Social Media Creative'],
       summary:
         'Diseñador visual con sólida base en dirección de arte y tecnología creativa. Experto en la creación de piezas de campaña de alto impacto, contenido para redes sociales y activos digitales complejos. Combino el dominio de herramientas tradicionales (Adobe Suite) con flujos de vanguardia (IA generativa, 3D y motion graphics) para ofrecer soluciones visuales sin límites técnicos. Experiencia trabajando bajo presión en la escena creativa de Guadalajara.',
       keywords: ['diseño', 'diseñador', 'designer', 'design', 'gráfico', 'graphic', 'branding', 'marca', 'identidad', 'redes sociales', 'social media', 'contenido', 'content', 'campaña', 'campaign', 'photoshop', 'illustrator', 'indesign', 'canva', 'figma', 'after effects', 'premiere', 'motion graphics', 'editorial', 'publicidad', 'advertising', 'marketing', 'agencia', 'community', 'ilustración'],
@@ -84,6 +92,7 @@ export const seedProfile: Profile = {
       id: 'hospitality',
       label: 'Hospitalidad',
       title: 'Especialista en Atención al Cliente & Operaciones de Hospitalidad',
+      titles: ['Especialista en Atención al Cliente & Operaciones de Hospitalidad', 'Gestor de Operaciones y Hospitalidad', 'Recepcionista & Atención al Huésped', 'Coordinador de Experiencia del Huésped'],
       summary:
         'Profesional enfocado en la excelencia del servicio al cliente, la gestión hotelera y la administración de alojamientos. Experiencia en recepción, coordinación operativa y atención personalizada para garantizar altos estándares de calidad y la máxima satisfacción de los huéspedes. Destaco por mi enfoque colaborativo, orientación a resultados y resolución proactiva de problemas, integrando competencias digitales y de comunicación visual para optimizar procesos y la experiencia del cliente.',
       keywords: ['hotel', 'hotelería', 'hospitality', 'hospitalidad', 'recepción', 'recepcionista', 'receptionist', 'front desk', 'huésped', 'huéspedes', 'guest', 'guests', 'atención al cliente', 'customer service', 'servicio al cliente', 'airbnb', 'turismo', 'tourism', 'concierge', 'restaurante', 'reservaciones', 'reservas', 'check-in', 'house manager', 'operaciones', 'ventas', 'retail', 'tienda'],
