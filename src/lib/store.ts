@@ -25,7 +25,13 @@ function usePersisted<T>(key: string, init: () => T) {
 
 const MIGRATIONS: Record<number, (p: Profile) => Profile> = {
   2: (p) => ({ ...p, location: /guadalajara/i.test(p.location) ? seedProfile.location : p.location }),
-  3: (p) => ({ ...p, tracks: p.tracks.map((t) => ({ ...t, titles: t.titles ?? seedProfile.tracks.find((s) => s.id === t.id)?.titles })) }),
+  3: (p) => ({
+    ...p,
+    tracks: p.tracks.map((t) => {
+      const s = seedProfile.tracks.find((x) => x.id === t.id)
+      return { ...t, titles: t.titles ?? s?.titles, summary: s && /^Desarrollador multimedia especializado/.test(t.summary) ? s.summary : t.summary }
+    }),
+  }),
 }
 
 export function cloneSeed(): Profile {

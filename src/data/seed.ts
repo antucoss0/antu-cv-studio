@@ -67,7 +67,7 @@ export const seedProfile: Profile = {
       title: 'Desarrollador Multimedia & Creative Technologist',
       titles: ['Creative Technologist & Artista Audiovisual', 'VJ & Artista Audiovisual en Vivo', 'Diseñador de Experiencias Inmersivas & Video Mapping', 'Artista Multimedia & Creative Technologist', 'Desarrollador Multimedia & Creative Technologist'],
       summary:
-        'Desarrollador multimedia especializado en diseño y desarrollo de experiencias interactivas que integran arte, tecnología y narrativa. Experiencia técnica en desarrollo XR, motores de videojuegos, sistemas audiovisuales en tiempo real, video mapping y entornos inmersivos. Capacidad demostrada para combinar pensamiento creativo con arquitectura técnica rigurosa en la construcción de soluciones digitales y nuevos lenguajes de interacción.',
+        'Creative technologist y artista multimedia especializado en diseño y desarrollo de experiencias interactivas que integran arte, tecnología y narrativa. Experiencia técnica en desarrollo XR, motores de videojuegos, sistemas audiovisuales en tiempo real, video mapping y entornos inmersivos. Capacidad demostrada para combinar pensamiento creativo con arquitectura técnica rigurosa en la construcción de soluciones digitales y nuevos lenguajes de interacción.',
       keywords: ['multimedia', 'audiovisual', 'a/v', 'vj', 'video mapping', 'mapping', 'touchdesigner', 'resolume', 'tiempo real', 'real-time', 'realtime', 'live', 'evento', 'eventos', 'events', 'instalación', 'interactivo', 'interactive', 'creative technologist', 'tecnólogo creativo', 'arduino', 'sensores', 'producción', 'show', 'música', 'music', 'museografía', 'experiencia'],
     },
     {
